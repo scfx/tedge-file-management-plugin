@@ -40,4 +40,5 @@ var removeCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(removeCmd)
+	removeCmd.Flags().StringVar(&moduleVersion, "module-version", "", "Version of the module to install")
 }

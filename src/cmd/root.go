@@ -17,6 +17,7 @@ var cfgFile string
 var config *files.Config
 var versions map[string]string
 var closeFunc func()
+var moduleVersion string
 
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
@@ -97,6 +98,7 @@ func setUpLogs() (func(), error) {
 		log.Println("Closing log file and reset log-output to stdout")
 		logFile.Close()
 		log.SetOutput(os.Stdout)
+		os.Exit(0)
 	}
 	return fn, nil
 }

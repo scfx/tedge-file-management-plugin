@@ -13,7 +13,6 @@ import (
 
 // Flag variables
 var filePath string
-var moduleVersion string
 
 // installCmd represents the install command
 var installCmd = &cobra.Command{
@@ -49,7 +48,7 @@ func init() {
 	rootCmd.AddCommand(installCmd)
 	// Here you will define your flags and configuration settings.
 	installCmd.Flags().StringVarP(&filePath, "file", "f", "", "File to install")
-	installCmd.Flags().StringVarP(&moduleVersion, "module-version", "v", "", "Version of the module to install")
+	installCmd.Flags().StringVar(&moduleVersion, "module-version", "", "Version of the module to install")
 
 	//Mark required flags
 	installCmd.MarkFlagRequired("file")
