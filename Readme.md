@@ -13,7 +13,9 @@ This software management plugin enables the **thin-edge.io** to manage files on 
 
 ## Installation
 
-1. Add the `file-management.json` file to the device. The Plugin expects the file to be located at `/etc/tedge/c8y/file-management.json`. The plugin expects the file to be json with the following fields:
+### 1. Add config file
+
+Add the `file-management.json` file to the device. The Plugin expects the file to be located at `/etc/tedge/c8y/file-management.json`. The plugin expects the file to be json with the following fields:
 
 ```bash
 sudo nano /etc/tedge/c8y/file-management.json
@@ -31,14 +33,18 @@ sudo nano /etc/tedge/c8y/file-management.json
 - **versionFile**: The file that contains the version of the files that are currently installed on the device. The file will be created by the plugin if it does not exist.
 - **logFile**: The folder where the log files should be stored.
 
-2. Make sure that the file-management.json file is readable by the thin-edge.io.
+### 2. Check access rights of config file
+
+Make sure that the file-management.json file is readable by the thin-edge.io.
 
 ```bash
 sudo chmod 644 /etc/tedge/c8y/file-management.json
 ```
 
-3. Add the plugin `files` to the thin-edge sm-plugins. The executable (plugin) must be located at `/etc/tedge/sm-plugins/files`.
-   Run the following command. Change the architecture if needed.
+### 3. Add executable to thin-edge sm plugins
+
+Add the plugin `files` to the thin-edge sm-plugins. The executable (plugin) must be located at `/etc/tedge/sm-plugins/file`.
+Run the following command. Change the architecture if needed.
 
 ```bash
 curl -s https://api.github.com/repos/scfx/tedge-file-management-plugin/releases/latest \
@@ -52,37 +58,39 @@ curl -s https://api.github.com/repos/scfx/tedge-file-management-plugin/releases/
 && sudo rm tedge-file-management-plugin
 ```
 
-```bash
+### 4. Check access rights of plugin
 
-```
-
-4. Make sure that the plugin is executable by the thin-edge.io.
+Make sure that the plugin is executable by the thin-edge.io.
 
 ```bash
 sudo chmod 755 /etc/tedge/sm-plugins/file
 ```
 
-5. Optional: Add the file-mangement.json file to the configurations files that can be managed via thin-edge.io. Follow this guide to enable the configuration management (https://thin-edge.github.io/thin-edge.io/start/getting-started/#step-6-manage-configuration-files)[Link to the thin-edge.io documentation] and edit the file: `/etc/tedge/c8y/c8y-configuration-plugin.toml`
+### 5. Optional: Manage the file-management.json file via thin-edge.io
+
+Add the file-mangement.json file to the configurations files that can be managed via thin-edge.io. Follow this guide to enable the configuration management (https://thin-edge.github.io/thin-edge.io/start/getting-started/#step-6-manage-configuration-files)[Link to the thin-edge.io documentation] and edit the file: `/etc/tedge/c8y/c8y-configuration-plugin.toml`
 
 ```toml
     files = [
     ...
     { path = '/etc/tedge/c8y/file-management.json', type = 'file-management.json' },
     ...
-]
+    ]
 ```
 
-6.  Optional: Add the log files to the thin-edge.io so that the logs can be access via Cumulocity IoT. Follow this guide to enable log file management (https://thin-edge.github.io/thin-edge.io/start/getting-started/#step-7-manage-log-files) [Link to the thin-edge.io documentation] and edit the file: `/etc/tedge/c8y/c8y-log-plugin.toml`
+### 6. Optional: Manage the log files via thin-edge.io
+
+Optional: Add the log files to the thin-edge.io so that the logs can be access via Cumulocity IoT. Follow this guide to enable log file management (https://thin-edge.github.io/thin-edge.io/start/getting-started/#step-7-manage-log-files) [Link to the thin-edge.io documentation] and edit the file: `/etc/tedge/c8y/c8y-log-plugin.toml`
 
 ```toml
     files = [
     ...
     { type = 'file-management', path = "/var/log/tedge/file-management/file-mgmnt-*" },
     ...
-]
+    ]
 ```
-
-7. Restart the thin-edge.io service via
+### 7. Restart the thin-edge.io service
+Restart the thin-edge.io service via
 
 ```bash
 sudo tedge disconnect c8y
@@ -105,4 +113,12 @@ Files can be added to your software repository via in the Cumulocity IoT Applica
 
 ```bash
 GOOS=linux GOARCH=amd64 go build -o file
+```
+
+### Run locally
+
+The default path of the config file is `/etc/tedge/c8y/file-management.json`. You can change the path via the `--config` flag if you want to run locally
+
+```bash
+go build && ./file-management list --config ../file-management.json
 ```
