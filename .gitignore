@@ -1,2 +1,4 @@
 .azure
 *.pem
+/test_files
+/temp

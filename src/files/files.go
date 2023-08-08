@@ -52,6 +52,7 @@ func ReadVersionFile(path string) (map[string]string, error) {
 	// Unmarshal the JSON data into a slice of FileVersion structs
 	var fileVersions []FileVersion
 	if err := json.Unmarshal(jsonData, &fileVersions); err != nil {
+
 		return nil, err
 	}
 
@@ -59,6 +60,7 @@ func ReadVersionFile(path string) (map[string]string, error) {
 	versions := make(map[string]string)
 	for _, fileVersion := range fileVersions {
 		versions[fileVersion.Name] = fileVersion.Version
+		log.Printf("Found file %s with version %s in version file", fileVersion.Name, fileVersion.Version)
 	}
 	return versions, nil
 }
@@ -80,6 +82,13 @@ func WriteVersionFile(path string, versions map[string]string) error {
 	if err := ioutil.WriteFile(path, jsonData, 0644); err != nil {
 		return err
 	}
+
+	//Logging
+	log.Printf("Write version file %s", path)
+	for _, fileVersion := range fileVersions {
+		log.Printf("Wrote file %s with version %s to version file", fileVersion.Name, fileVersion.Version)
+	}
+
 	return nil
 }
 
@@ -97,20 +106,25 @@ func GetFiles(config *Config, versions map[string]string) (map[string]string, er
 	if err != nil {
 		return nil, err
 	}
-
+	filesMap := make(map[string]string)
 	// Add each file to the map. If the file is not found in the map, set its version to "0.0"
 	for _, file := range files {
 		//Exclude the conifg.VersionFile file
-
 		if file.Name() != filepath.Base(config.VersionFile) && !file.IsDir() {
 			_, found := versions[file.Name()]
 			if !found {
-				versions[file.Name()] = "0.0"
+				log.Printf("No version found for file %s. Adding it with version 0.0", file.Name())
+				filesMap[file.Name()] = "0.0"
+			} else {
+				log.Printf("Found version %s for file %s", versions[file.Name()], file.Name())
+				filesMap[file.Name()] = versions[file.Name()]
 			}
+		} else {
+			log.Printf("Skipping file %s", file.Name())
 		}
 	}
 
-	return versions, nil
+	return filesMap, nil
 }
 
 func CopyFile(file string, folder string, name string) error {
@@ -124,6 +138,7 @@ func CopyFile(file string, folder string, name string) error {
 	destinationPath := filepath.Join(folder, name)
 
 	// Write the content to the destination file
+	log.Printf("Copy file %s to %s", file, destinationPath)
 	err = ioutil.WriteFile(destinationPath, content, 0644)
 	if err != nil {
 		return err
