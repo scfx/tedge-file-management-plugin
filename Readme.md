@@ -99,7 +99,7 @@ sudo tedge disconnect c8y
 And
 
 ```bash
-sudo tedge disconnect c8y
+sudo tedge connect c8y
 ```
 
 ## Usage
